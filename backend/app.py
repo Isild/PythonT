@@ -149,7 +149,7 @@ class Currency(Resource):
             workbook.close()
 
         except Exception as e:
-            print("Failed to load all data from database: ", e)
+            print("Failed to save all data from database to file: ", e)
             return 500
         return 200
 
