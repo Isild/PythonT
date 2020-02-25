@@ -7,7 +7,7 @@ from flask_restplus import reqparse
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import datetime
-import flask_excel as excel
+import xlsxwriter
 
 ############# config
 
@@ -96,7 +96,57 @@ class Currency(Resource):
 class Currency(Resource):
     def get(self):
         try:
-            return excel.make_response_from_tables(db.session, [CurrencyData], "handsontable.html")
+            workbook = xlsxwriter.Workbook('dataFromDatabase.xlsx')
+            worksheet = workbook.add_worksheet()
+
+            worksheet.write('A1', 'Hello world')
+
+            cData = CurrencyData.query.all()
+            all_data = [{
+                'eur': cur.eur,
+                'usd': cur.usd,
+                'jpy': cur.jpy,
+                'gbp': cur.gbp,
+                'date': cur.dataDateTime 
+            } for cur in cData]
+
+            row = 0
+            col = 0
+
+            worksheet.write(row, col, "Aktuelle Wechselkurse: Übersicht \nCours de change actuels: aperçu \nCurrent exchange rates: overview \nTassi di cambio attuali: panoramica")
+            row += 1
+
+            worksheet.write(row, col, "EUR")
+            worksheet.write(row, col + 1, "1 EUR in/en CHF")
+            row += 1
+            worksheet.write(row, col, "USD")
+            worksheet.write(row, col + 1, "1 USD in/en CHF")
+            row += 1
+            worksheet.write(row, col, "JPY")
+            worksheet.write(row, col + 1, "100 JPY in/en CHF")
+            row += 1
+            worksheet.write(row, col, "GBP")
+            worksheet.write(row, col + 1, "1 GBP in/en CHF")
+            row += 1
+
+            worksheet.write(row, col, "")
+            worksheet.write(row, col + 1, "EUR")
+            worksheet.write(row, col + 2, "USD")
+            worksheet.write(row, col + 3, "JPY")
+            worksheet.write(row, col + 4, "GBP")
+            row += 1
+
+            for d in all_data:
+                worksheet.write(row, col, d['date'])
+                worksheet.write(row, col + 1, d['eur'])
+                worksheet.write(row, col + 2, d['usd'])
+                worksheet.write(row, col + 3, d['jpy'])
+                worksheet.write(row, col + 4, d['gbp'])
+
+                row += 1
+
+            workbook.close()
+
         except Exception as e:
             print("Failed to load all data from database: ", e)
             return 500
