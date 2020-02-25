@@ -1,95 +1,87 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li>
-        <a
-          href="https://vuejs.org"
-          target="_blank"
-        >
-          Core Docs
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://forum.vuejs.org"
-          target="_blank"
-        >
-          Forum
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://chat.vuejs.org"
-          target="_blank"
-        >
-          Community Chat
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://twitter.com/vuejs"
-          target="_blank"
-        >
-          Twitter
-        </a>
-      </li>
-      <br>
-      <li>
-        <a
-          href="http://vuejs-templates.github.io/webpack/"
-          target="_blank"
-        >
-          Docs for This Template
-        </a>
-      </li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li>
-        <a
-          href="http://router.vuejs.org/"
-          target="_blank"
-        >
-          vue-router
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vuex.vuejs.org/"
-          target="_blank"
-        >
-          vuex
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vue-loader.vuejs.org/"
-          target="_blank"
-        >
-          vue-loader
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-        >
-          awesome-vue
-        </a>
-      </li>
-    </ul>
+    
+    <h2> Exchange latest rates </h2>
+    <center>
+      <table id="tableLastData">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>EUR</th>
+            <th>USD</th>
+            <th>JPY</th>
+            <th>GBP</th>
+          </tr>
+        </thead>
+        <tbody>
+            <td>{{ json_data.date }}</td>
+            <td>{{ json_data.eur }}</td>
+            <td>{{ json_data.usd }}</td>
+            <td>{{ json_data.jpy }}</td>
+            <td>{{ json_data.gbp }}</td>
+        </tbody>
+      </table> <br>
+      <button v-on:click="loadLastData">Update</button>
+      </center>
+
+      <h3> Exchange all rates </h3>
+      <center>
+        <table id="tableAllData">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>EUR</th>
+              <th>USD</th>
+              <th>JPY</th>
+              <th>GBP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="jad in json_all_data">
+              <td>{{ jad.date }}</td>
+              <td>{{ jad.eur }}</td>
+              <td>{{ jad.usd }}</td>
+              <td>{{ jad.jpy }}</td>
+              <td>{{ jad.gbp }}</td>
+            </tr> 
+          </tbody>
+        </table> <br>
+        <button v-on:click="loadAllData">Update</button>
+        </center>
+
+      <h4> Write data to file </h4>
+
+
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to my test Vue.js App',
+      json_data: [],
+      json_all_data: []
     }
+  },
+  methods: {
+    loadLastData() {
+      axios
+        .get('http://127.0.0.1:5000/currency', {headers: {'Content-Type': 'application/json'}})
+        .then(response => (this.json_data = response.data))
+    },
+    loadAllData() {
+      axios
+        .get('http://127.0.0.1:5000/currencyAll', {headers: {'Content-Type': 'application/json'}})
+        .then(response => (this.json_all_data = response.data))
+    }
+  },
+  beforeMount(){
+    this.loadLastData();
+    this.loadAllData();
   }
 }
 </script>
@@ -109,5 +101,8 @@ li {
 }
 a {
   color: #42b983;
+}
+table {
+  border-style: solid;
 }
 </style>
