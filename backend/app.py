@@ -6,7 +6,7 @@ from flask_restplus import Resource, Api
 from flask_restplus import reqparse
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from datetime import date
+import datetime
 import flask_excel as excel
 
 ############# config
@@ -63,7 +63,7 @@ class Currency(Resource):
 
         if dataFromJson:
             try:
-                c = CurrencyData(eur=dataFromJson['eur'], usd=dataFromJson['usd'], jpy=dataFromJson['jpy'], gbp=dataFromJson['gbp'], dataDateTime=date.today())
+                c = CurrencyData(eur=dataFromJson['eur'], usd=dataFromJson['usd'], jpy=dataFromJson['jpy'], gbp=dataFromJson['gbp'], dataDateTime=datetime.datetime.now())
                 #print("Pobrane dane: ", c)
                 db.session.add(c)
                 db.session.commit()
