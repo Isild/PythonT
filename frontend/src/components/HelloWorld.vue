@@ -51,7 +51,7 @@
         </center>
 
       <h4> Write data to file </h4>
-
+      <button v-on:click="saveDataToFile">Save data to file</button>
 
   </div>
 </template>
@@ -77,6 +77,10 @@ export default {
       axios
         .get('http://127.0.0.1:5000/currencyAll', {headers: {'Content-Type': 'application/json'}})
         .then(response => (this.json_all_data = response.data))
+    },
+    saveDataToFile() {
+      axios
+        .get('http://127.0.0.1:5000/saveToFile')
     }
   },
   beforeMount(){
