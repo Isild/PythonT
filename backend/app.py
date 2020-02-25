@@ -137,7 +137,8 @@ class Currency(Resource):
             row += 1
 
             for d in all_data:
-                worksheet.write(row, col, d['date'])
+                print("data: ", d["date"])
+                worksheet.write(row, col, str(d['date']))
                 worksheet.write(row, col + 1, d['eur'])
                 worksheet.write(row, col + 2, d['usd'])
                 worksheet.write(row, col + 3, d['jpy'])
