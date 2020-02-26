@@ -51,7 +51,10 @@
         </center>
 
       <h4> Write data to file </h4>
-      <button v-on:click="saveDataToFile">Save data to file</button>
+        <button v-on:click="saveDataToFile">Save data to file</button>
+
+      <h5> Write data from file </h5>
+        <button v-on:click="loadDataFromFile">Load data from file</button>
 
   </div>
 </template>
@@ -81,6 +84,10 @@ export default {
     saveDataToFile() {
       axios
         .get('http://127.0.0.1:5000/saveToFile')
+    },
+    loadDataFromFile() {
+      axios
+        .get('http://127.0.0.1:5000/readFromFile')
     }
   },
   beforeMount(){
