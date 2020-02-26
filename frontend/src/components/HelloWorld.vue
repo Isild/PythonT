@@ -2,7 +2,7 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     
-    <h2> Exchange latest rates </h2>
+    <h5> Exchange latest rates </h5>
     <center>
       <table id="tableLastData">
         <thead>
@@ -25,7 +25,22 @@
       <button v-on:click="loadLastData">Update</button>
       </center>
 
-      <h3> Exchange all rates </h3>
+      <h5> Update data </h5>
+     
+        <label for="eur">EUR</label>
+        <input type="text" ref="eur" name="eur"><br><br>
+        <label for="usd">USD</label>
+        <input type="text" ref="usd" name="usd"><br><br>
+        <label for="jpy">JPY</label>
+        <input type="text" ref="jpy" name="jpy"><br><br>
+        <label for="gbp">GBP</label>
+        <input type="text" ref="gbp" name="gbp"><br><br>
+        <br>
+        
+        <button v-on:click="updateOneCurrencyData">Update</button>
+      
+
+      <h5> Exchange all rates </h5>
       <center>
         <table id="tableAllData">
           <thead>
@@ -95,6 +110,20 @@ export default {
     clearDataInDatabase() {
       axios
         .get('http://127.0.0.1:5000/clearDatabase')
+    },
+    updateOneCurrencyData() {
+      var eur = this.$refs.eur.value;
+      var usd = this.$refs.usd.value;
+      var jpy = this.$refs.jpy.value;
+      var gbp = this.$refs.gbp.value;
+
+      axios
+        .post('http://127.0.0.1:5000/currency', {
+          eur: eur,
+          usd: usd,
+          jpy: jpy,
+          gbp: gbp
+        })
     }
   },
   beforeMount(){
