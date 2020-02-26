@@ -53,8 +53,11 @@
       <h4> Write data to file </h4>
         <button v-on:click="saveDataToFile">Save data to file</button>
 
-      <h5> Write data from file </h5>
+      <h4> Write data from file </h4>
         <button v-on:click="loadDataFromFile">Load data from file</button>
+
+      <h4> Clear data in database </h4>
+        <button v-on:click="clearDataInDatabase">Clear</button>
 
   </div>
 </template>
@@ -88,6 +91,10 @@ export default {
     loadDataFromFile() {
       axios
         .get('http://127.0.0.1:5000/readFromFile')
+    },
+    clearDataInDatabase() {
+      axios
+        .get('http://127.0.0.1:5000/clearDatabase')
     }
   },
   beforeMount(){

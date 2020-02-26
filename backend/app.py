@@ -112,7 +112,7 @@ class Currency(Resource):
             row = 0
             col = 0
 
-            worksheet.write(row, col, "Aktuelle Wechselkurse: Übersicht \nCours de change actuels: aperçu \nCurrent exchange rates: overview \nTassi di cambio attuali: panoramica")
+            worksheet.write(row, col, "Aktuelle Wechselkurse: Übersicht\nCours de change actuels: aperçu\nCurrent exchange rates: overview\nTassi di cambio attuali: panoramica")
             worksheet.write(row, col + 5, str(datetime.datetime.now()))
             row += 1
 
@@ -159,7 +159,7 @@ class Currency(Resource):
     def get(self):
         try:
             excel_data_df = pandas.read_excel('current_exchange_rates.xlsx', sheet_name='Exchange Rates')
-            # print("Dane z pliku: \n", excel_data_df)
+            #print("Dane z pliku: \n", excel_data_df)
 
             date_column=excel_data_df['Aktuelle Wechselkurse: Übersicht\nCours de change actuels: aperçu\nCurrent exchange rates: overview\nTassi di cambio attuali: panoramica'].tolist()
             eur_column=excel_data_df['Unnamed: 1'].tolist()
@@ -179,6 +179,17 @@ class Currency(Resource):
             
         except Exception as e:
             print("Failed to read all data from file to database: ", e)
+            return 500
+        return 200
+
+@api.route('/clearDatabase')
+class Currency(Resource):
+    def get(self):
+        try:
+            CurrencyData.query.delete()
+            db.session.commit()
+        except Exception as e:
+            print("Failed to clear all data in database: ", e)
             return 500
         return 200
 
