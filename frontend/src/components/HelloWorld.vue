@@ -26,7 +26,9 @@
       </center>
 
       <h5> Update data </h5>
-     
+        <ul>
+          <li v-for="error in this.errors">{{ error }}</li>
+        </ul>
         <label for="eur">EUR</label>
         <input type="text" ref="eur" name="eur"><br><br>
         <label for="usd">USD</label>
@@ -41,6 +43,8 @@
       
 
       <h5> Exchange all rates </h5>
+        <button v-on:click="loadAllData">Update Table</button>
+        
       <center>
         <table id="tableAllData">
           <thead>
@@ -62,7 +66,6 @@
             </tr> 
           </tbody>
         </table> <br>
-        <button v-on:click="loadAllData">Update</button>
         </center>
 
       <h4> Write data to file </h4>
@@ -85,7 +88,8 @@ export default {
     return {
       msg: 'Welcome to my test Vue.js App',
       json_data: [],
-      json_all_data: []
+      json_all_data: [],
+      errors: []
     }
   },
   methods: {
@@ -112,18 +116,38 @@ export default {
         .get('http://127.0.0.1:5000/clearDatabase')
     },
     updateOneCurrencyData() {
-      var eur = this.$refs.eur.value;
-      var usd = this.$refs.usd.value;
-      var jpy = this.$refs.jpy.value;
-      var gbp = this.$refs.gbp.value;
+      if(this.inputValidation()){
+        var eur = this.$refs.eur.value;
+        var usd = this.$refs.usd.value;
+        var jpy = this.$refs.jpy.value;
+        var gbp = this.$refs.gbp.value;
 
-      axios
-        .post('http://127.0.0.1:5000/currency', {
-          eur: eur,
-          usd: usd,
-          jpy: jpy,
-          gbp: gbp
-        })
+        axios
+          .post('http://127.0.0.1:5000/currency', {
+            eur: eur,
+            usd: usd,
+            jpy: jpy,
+            gbp: gbp
+          })
+      }
+      
+    },
+    inputValidation() {
+      if(this.errors.length != 0) {
+        this.errors.length = 0;
+      }
+
+      if(this.$refs.eur.value.length == 0 || this.$refs.usd.value.length == 0 || this.$refs.jpy.value.length == 0 || this.$refs.gbp.value.length == 0) {
+        this.errors.push('All fields must be filled.');
+        return false;
+      } 
+      
+      if(isNaN(this.$refs.eur.value % 1) || isNaN(this.$refs.usd.value % 1) || isNaN(this.$refs.jpy.value % 1) || isNaN(this.$refs.gbp.value % 1)){
+        this.errors.push('Inputs must be a number. In float number use dot.');
+        return false;        
+      }
+
+      return true;
     }
   },
   beforeMount(){
