@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import datetime
 import xlsxwriter
+import pandas
 
 ############# config
 
@@ -99,8 +100,6 @@ class Currency(Resource):
             workbook = xlsxwriter.Workbook('dataFromDatabase.xlsx')
             worksheet = workbook.add_worksheet()
 
-            worksheet.write('A1', 'Hello world')
-
             cData = CurrencyData.query.all()
             all_data = [{
                 'eur': cur.eur,
@@ -110,7 +109,7 @@ class Currency(Resource):
                 'date': cur.dataDateTime 
             } for cur in cData]
 
-            row = 0
+            row = 1
             col = 0
 
             worksheet.write(row, col, "Aktuelle Wechselkurse: Übersicht \nCours de change actuels: aperçu \nCurrent exchange rates: overview \nTassi di cambio attuali: panoramica")
@@ -153,6 +152,39 @@ class Currency(Resource):
             return 500
         return 200
 
+
+@api.route('/readFromFile')
+class Currency(Resource):
+    def get(self):
+        try:
+            excel_data_df = pandas.read_excel('dataFromDatabase.xlsx', sheet_name='Sheet1')
+            print("Dane z pliku: \n", excel_data_df)
+
+            #print("\n\nDane z jednej kolumny: \n", excel_data_df['Unnamed: 0'].tolist())
+            date_column=excel_data_df['Unnamed: 0'].tolist()
+            eur_column=excel_data_df['Unnamed: 1'].tolist()
+            usd_column=excel_data_df['Unnamed: 2'].tolist()
+            jpy_column=excel_data_df['Unnamed: 3'].tolist()
+            gbp_column=excel_data_df['Unnamed: 4'].tolist()
+
+            listLen=len(date_column)
+            
+            for i in range(listLen-6):
+                print("i: ", i+6, " | ", date_column[i+6], " | ", eur_column[i+6], " | ", usd_column[i+6], " | ", jpy_column[i+6], " | ", gbp_column[i+6])
+                # c = CurrencyData(eur=eur_column[i+6], usd=usd_column[i+6], jpy=jpy_column[i+6], gbp=gbp_column[i+6], dataDateTime=date_column[i+6])
+                # datetime.fromtimestamp(value.timestamp())
+                # print("Data: ", datetime.datetime.strptime(date_column[i+6], ' %y-%m-%d %H:%M:%S '))
+                c = CurrencyData(eur=eur_column[i+6], usd=usd_column[i+6], jpy=jpy_column[i+6], gbp=gbp_column[i+6], dataDateTime=datetime.datetime.now())
+                
+                #print("Pobrane dane: ", c)
+                db.session.add(c)
+                db.session.commit()
+                
+
+        except Exception as e:
+            print("Failed to read all data from file to database: ", e)
+            return 500
+        return 200
 
 if __name__ == '__main__':
     app.run(debug=True)
