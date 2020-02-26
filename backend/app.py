@@ -170,17 +170,12 @@ class Currency(Resource):
             listLen=len(date_column)
             
             for i in range(listLen-6):
-                print("i: ", i+6, " | ", date_column[i+6], " | ", eur_column[i+6], " | ", usd_column[i+6], " | ", jpy_column[i+6], " | ", gbp_column[i+6])
-                # c = CurrencyData(eur=eur_column[i+6], usd=usd_column[i+6], jpy=jpy_column[i+6], gbp=gbp_column[i+6], dataDateTime=date_column[i+6])
-                # datetime.fromtimestamp(value.timestamp())
-                # print("Data: ", datetime.datetime.strptime(date_column[i+6], ' %y-%m-%d %H:%M:%S '))
-                c = CurrencyData(eur=eur_column[i+6], usd=usd_column[i+6], jpy=jpy_column[i+6], gbp=gbp_column[i+6], dataDateTime=datetime.datetime.now())
-                
-                #print("Pobrane dane: ", c)
-                db.session.add(c)
-                db.session.commit()
-                
+                #print("i: ", i+6, " | ", date_column[i+6], " | ", eur_column[i+6], " | ", usd_column[i+6], " | ", jpy_column[i+6], " | ", gbp_column[i+6])
+                c = CurrencyData(eur=eur_column[i+6], usd=usd_column[i+6], jpy=jpy_column[i+6], gbp=gbp_column[i+6], dataDateTime=pandas.to_datetime(date_column[i+6]   ))
 
+                db.session.add(c)
+            db.session.commit()
+            
         except Exception as e:
             print("Failed to read all data from file to database: ", e)
             return 500
