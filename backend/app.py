@@ -97,8 +97,8 @@ class Currency(Resource):
 class Currency(Resource):
     def get(self):
         try:
-            workbook = xlsxwriter.Workbook('dataFromDatabase.xlsx')
-            worksheet = workbook.add_worksheet()
+            workbook = xlsxwriter.Workbook('current_exchange_rates.xlsx')
+            worksheet = workbook.add_worksheet('Exchange Rates')
 
             cData = CurrencyData.query.all()
             all_data = [{
@@ -109,10 +109,11 @@ class Currency(Resource):
                 'date': cur.dataDateTime 
             } for cur in cData]
 
-            row = 1
+            row = 0
             col = 0
 
             worksheet.write(row, col, "Aktuelle Wechselkurse: Übersicht \nCours de change actuels: aperçu \nCurrent exchange rates: overview \nTassi di cambio attuali: panoramica")
+            worksheet.write(row, col + 5, str(datetime.datetime.now()))
             row += 1
 
             worksheet.write(row, col, "EUR")
@@ -157,11 +158,10 @@ class Currency(Resource):
 class Currency(Resource):
     def get(self):
         try:
-            excel_data_df = pandas.read_excel('dataFromDatabase.xlsx', sheet_name='Sheet1')
-            print("Dane z pliku: \n", excel_data_df)
+            excel_data_df = pandas.read_excel('current_exchange_rates.xlsx', sheet_name='Exchange Rates')
+            # print("Dane z pliku: \n", excel_data_df)
 
-            #print("\n\nDane z jednej kolumny: \n", excel_data_df['Unnamed: 0'].tolist())
-            date_column=excel_data_df['Unnamed: 0'].tolist()
+            date_column=excel_data_df['Aktuelle Wechselkurse: Übersicht\nCours de change actuels: aperçu\nCurrent exchange rates: overview\nTassi di cambio attuali: panoramica'].tolist()
             eur_column=excel_data_df['Unnamed: 1'].tolist()
             usd_column=excel_data_df['Unnamed: 2'].tolist()
             jpy_column=excel_data_df['Unnamed: 3'].tolist()
@@ -169,9 +169,10 @@ class Currency(Resource):
 
             listLen=len(date_column)
             
-            for i in range(listLen-6):
-                #print("i: ", i+6, " | ", date_column[i+6], " | ", eur_column[i+6], " | ", usd_column[i+6], " | ", jpy_column[i+6], " | ", gbp_column[i+6])
-                c = CurrencyData(eur=eur_column[i+6], usd=usd_column[i+6], jpy=jpy_column[i+6], gbp=gbp_column[i+6], dataDateTime=pandas.to_datetime(date_column[i+6]   ))
+            column=5
+            for i in range(listLen-column):
+                # print("i: ", i+column, " | ", date_column[i+column], " | ", eur_column[i+column], " | ", usd_column[i+column], " | ", jpy_column[i+column], " | ", gbp_column[i+column])
+                c = CurrencyData(eur=eur_column[i+column], usd=usd_column[i+column], jpy=jpy_column[i+column], gbp=gbp_column[i+column], dataDateTime=pandas.to_datetime(date_column[i+column]))
 
                 db.session.add(c)
             db.session.commit()
