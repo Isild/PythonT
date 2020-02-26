@@ -40,7 +40,7 @@ class CurrencyData(db.Model):
 class Currency(Resource):
     def get(self):
         try:
-            lastData = CurrencyData.query.order_by(-CurrencyData.id).first()
+            lastData = CurrencyData.query.order_by(CurrencyData.dataDateTime.desc()).first()
             #print("Ostatnia aktualizacja danych: ", lastData)
         except Exception as e:
             #print("Failed to load all data from database: ", e)
@@ -79,7 +79,7 @@ class Currency(Resource):
 class Currency(Resource):
     def get(self):
         try:
-            cData = CurrencyData.query.all()
+            cData = CurrencyData.query.order_by(CurrencyData.dataDateTime.desc()).all()
         except Exception as e:
             print("Failed to load all data from database: ", e)
             return 500
